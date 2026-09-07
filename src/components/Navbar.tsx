@@ -7,6 +7,7 @@ import Image from 'next/image'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -15,85 +16,128 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Halaman yang navbar-nya selalu solid (bukan di atas hero)
-  const isSolid = pathname !== '/'
+  // Tutup menu saat pindah halaman
+  useEffect(() => { setMenuOpen(false) }, [pathname])
 
-  const navClass = isSolid
-    ? 'navbar navbar-expand-lg navbar-dark fixed-top'
-    : `navbar navbar-expand-lg navbar-dark fixed-top${scrolled ? ' scrolled' : ''}`
+  const isHome = pathname === '/'
+  const bgColor = (!isHome || scrolled || menuOpen)
+    ? 'rgba(0,124,146,0.97)'
+    : 'transparent'
 
-  const navStyle = isSolid
-    ? { background: 'rgba(0,124,146,0.97)', padding: '10px 0' }
-    : scrolled
-    ? {}
-    : { background: 'transparent', padding: '20px 0' }
+  const navLinks = [
+    { href: '/', label: 'HOME' },
+    { href: '/profil', label: 'PROFIL' },
+    { href: '/informasi', label: 'INFORMASI' },
+    { href: '/kontak', label: 'KONTAK' },
+  ]
 
   return (
-    <nav className={navClass} id="mainNav" style={navStyle}>
-      <div className="container">
-        <Link className="navbar-brand d-flex align-items-center" href="/">
-          <Image src="/img/logo.png" alt="Logo" width={55} height={55} className="me-2" />
+    <nav
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        background: bgColor,
+        backdropFilter: scrolled ? 'blur(10px)' : 'none',
+        boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.2)' : 'none',
+        transition: 'all 0.4s ease',
+        padding: scrolled ? '10px 0' : '18px 0',
+      }}
+    >
+      <div className="container d-flex align-items-center justify-content-between">
+
+        {/* Logo */}
+        <Link href="/" className="d-flex align-items-center text-decoration-none">
+          <Image src="/img/logo.png" alt="Logo" width={50} height={50} className="me-2" />
           <div style={{ lineHeight: 1.2 }}>
-            <span className="fw-bold d-block mb-0 h6 text-white">SMP INTEGRAL</span>
-            <small style={{ fontSize: '0.65rem', color: 'var(--smp-gold)' }}>HIDAYATULLAH KEBUMEN</small>
+            <span className="fw-bold d-block text-white" style={{ fontSize: '0.95rem' }}>SMP INTEGRAL</span>
+            <small style={{ fontSize: '0.6rem', color: '#ffcc00' }}>HIDAYATULLAH KEBUMEN</small>
           </div>
         </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
+        {/* Menu Desktop */}
+        <div className="d-none d-lg-flex align-items-center gap-2">
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-decoration-none px-3 py-2"
+              style={{
+                color: 'white',
+                fontWeight: 500,
+                fontSize: '0.9rem',
+                letterSpacing: '0.5px',
+                borderBottom: pathname === href ? '2px solid #ffcc00' : '2px solid transparent',
+                transition: 'all 0.2s',
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+          <a
+            href="https://spmb-aiis.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ms-2 text-decoration-none px-4 py-2 fw-bold"
+            style={{
+              background: '#ffcc00',
+              color: '#1a1a1a',
+              borderRadius: '50px',
+              fontSize: '0.9rem',
+            }}
+          >
+            DAFTAR
+          </a>
+        </div>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto align-items-center">
-            {[
-              { href: '/', label: 'HOME' },
-              { href: '/profil', label: 'PROFIL' },
-              { href: '/informasi', label: 'INFORMASI' },
-              { href: '/kontak', label: 'KONTAK' },
-            ].map(({ href, label }) => (
-              <li className="nav-item" key={href}>
-                <Link
-                  className="nav-link"
-                  href={href}
-                  style={{
-                    color: 'white',
-                    fontWeight: 500,
-                    margin: '0 8px',
-                    borderBottom: pathname === href ? '2px solid var(--smp-gold)' : 'none',
-                  }}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-            <li className="nav-item ms-lg-3">
-              <a
-                href="https://spmb-aiis.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="nav-link shadow-sm"
+        {/* Tombol Hamburger Mobile */}
+        <button
+          className="d-lg-none border-0 bg-transparent"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+          style={{ cursor: 'pointer' }}
+        >
+          <div style={{ width: 25, height: 2, background: 'white', margin: '5px 0', transition: '0.3s',
+            transform: menuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
+          <div style={{ width: 25, height: 2, background: 'white', margin: '5px 0', transition: '0.3s',
+            opacity: menuOpen ? 0 : 1 }} />
+          <div style={{ width: 25, height: 2, background: 'white', margin: '5px 0', transition: '0.3s',
+            transform: menuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
+        </button>
+      </div>
+
+      {/* Menu Mobile */}
+      {menuOpen && (
+        <div style={{ background: 'rgba(0,124,146,0.97)', borderTop: '1px solid rgba(255,255,255,0.1)', padding: '10px 0' }}>
+          <div className="container d-flex flex-column gap-1">
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-decoration-none py-2 px-3 rounded"
                 style={{
-                  backgroundColor: 'var(--smp-gold)',
-                  color: '#1a1a1a',
-                  fontWeight: 700,
-                  borderRadius: '50px',
-                  padding: '8px 25px',
+                  color: pathname === href ? '#ffcc00' : 'white',
+                  fontWeight: pathname === href ? 700 : 500,
+                  background: pathname === href ? 'rgba(255,255,255,0.1)' : 'transparent',
                 }}
               >
-                DAFTAR
-              </a>
-            </li>
-          </ul>
+                {label}
+              </Link>
+            ))}
+            <a
+              href="https://spmb-aiis.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-decoration-none py-2 px-3 rounded fw-bold text-center mt-1"
+              style={{ background: '#ffcc00', color: '#1a1a1a' }}
+            >
+              DAFTAR
+            </a>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   )
 }
