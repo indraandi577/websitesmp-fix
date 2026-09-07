@@ -1,5 +1,4 @@
 import HeroSliderWrapper from '@/components/home/HeroSliderWrapper'
-import StatSection from '@/components/home/StatSection'
 import BeritaSection from '@/components/home/BeritaSection'
 import { createClient } from '@/lib/supabase/server'
 import type { Berita } from '@/lib/types'
@@ -18,7 +17,6 @@ export default async function HomePage() {
   return (
     <>
       <HeroSliderWrapper />
-      <StatSection />
       <BeritaSection beritas={(beritas as Berita[]) ?? []} />
     </>
   )

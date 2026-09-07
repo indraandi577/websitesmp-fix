@@ -4,78 +4,74 @@ import Link from 'next/link'
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
-  // Ambil semua statistik sekaligus
   const [
     { count: jmlGuru },
     { count: jmlFasilitas },
     { count: jmlBerita },
-    { count: jmlSiswa },
-    { data: siswaBaru },
   ] = await Promise.all([
     supabase.from('gurus').select('*', { count: 'exact', head: true }),
     supabase.from('fasilitas').select('*', { count: 'exact', head: true }),
     supabase.from('beritas').select('*', { count: 'exact', head: true }),
-    supabase.from('pendaftarans').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('pendaftarans')
-      .select('nama_lengkap, asal_sekolah, status, created_at')
-      .order('created_at', { ascending: false })
-      .limit(5),
   ])
 
   const stats = [
-    { label: 'Total Guru', value: jmlGuru ?? 0, icon: 'fa-chalkboard-teacher', color: '#007c92', href: '/admin/guru' },
-    { label: 'Fasilitas', value: jmlFasilitas ?? 0, icon: 'fa-building', color: '#27ae60', href: '/admin/fasilitas' },
-    { label: 'Calon Siswa', value: jmlSiswa ?? 0, icon: 'fa-user-graduate', color: '#2980b9', href: '/admin/pendaftaran' },
-    { label: 'Berita & Info', value: jmlBerita ?? 0, icon: 'fa-newspaper', color: '#2c3e50', href: '/admin/berita' },
+    {
+      label: 'Berita & Info',
+      value: jmlBerita ?? 0,
+      icon: 'fa-newspaper',
+      color: '#007c92',
+      href: '/admin/berita',
+      tambah: '/admin/berita/tambah',
+    },
+    {
+      label: 'Data Guru',
+      value: jmlGuru ?? 0,
+      icon: 'fa-chalkboard-teacher',
+      color: '#27ae60',
+      href: '/admin/guru',
+      tambah: '/admin/guru/tambah',
+    },
+    {
+      label: 'Fasilitas',
+      value: jmlFasilitas ?? 0,
+      icon: 'fa-building',
+      color: '#8e44ad',
+      href: '/admin/fasilitas',
+      tambah: '/admin/fasilitas/tambah',
+    },
   ]
-
-  function badgeColor(status: string) {
-    switch (status) {
-      case 'diterima': return '#27ae60'
-      case 'menunggu_verifikasi': return '#e67e22'
-      default: return '#7f8c8d'
-    }
-  }
-
-  function statusLabel(status: string) {
-    switch (status) {
-      case 'diterima': return 'Diterima'
-      case 'menunggu_verifikasi': return 'Menunggu Verifikasi'
-      default: return 'Akun Dibuat'
-    }
-  }
 
   return (
     <div>
       <div className="mb-4">
         <h3 className="fw-bold mb-1" style={{ color: '#1a1a2e' }}>Dashboard Utama</h3>
-        <p className="text-muted small">Ringkasan pengelolaan website SMP Integral Hidayatullah Kebumen</p>
+        <p className="text-muted small">Selamat datang di panel admin SMP Integral Hidayatullah Kebumen</p>
       </div>
 
       {/* Stat Cards */}
-      <div className="row g-4 mb-4">
+      <div className="row g-4 mb-5">
         {stats.map((s) => (
-          <div className="col-md-3 col-sm-6" key={s.label}>
-            <div
-              className="card border-0 shadow-sm h-100"
-              style={{ borderRadius: 12, borderLeft: `4px solid ${s.color}` }}
-            >
+          <div className="col-md-4" key={s.label}>
+            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: 14, borderLeft: `4px solid ${s.color}` }}>
               <div className="card-body d-flex align-items-center p-4">
                 <div
-                  className="rounded-circle d-flex align-items-center justify-content-center me-3"
-                  style={{ width: 50, height: 50, background: `${s.color}20` }}
+                  className="rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0"
+                  style={{ width: 54, height: 54, background: `${s.color}18` }}
                 >
-                  <i className={`fas ${s.icon}`} style={{ color: s.color, fontSize: 20 }} />
+                  <i className={`fas ${s.icon}`} style={{ color: s.color, fontSize: 22 }} />
                 </div>
-                <div>
+                <div className="flex-grow-1">
                   <div className="text-muted small">{s.label}</div>
                   <h3 className="fw-bold mb-0" style={{ color: s.color }}>{s.value}</h3>
                 </div>
               </div>
-              <div className="card-footer bg-transparent border-top-0 px-4 pb-3">
+              <div className="card-footer bg-transparent border-top px-4 py-3 d-flex gap-3 align-items-center">
                 <Link href={s.href} className="small text-decoration-none fw-semibold" style={{ color: s.color }}>
-                  Lihat Detail <i className="fas fa-arrow-right ms-1" style={{ fontSize: 10 }} />
+                  <i className="fas fa-list me-1" style={{ fontSize: 11 }} />Lihat Semua
+                </Link>
+                <span className="text-muted">|</span>
+                <Link href={s.tambah} className="small text-decoration-none fw-semibold" style={{ color: s.color }}>
+                  <i className="fas fa-plus me-1" style={{ fontSize: 11 }} />Tambah Baru
                 </Link>
               </div>
             </div>
@@ -83,59 +79,73 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      {/* Tabel Pendaftar Terbaru */}
-      <div className="card border-0 shadow-sm" style={{ borderRadius: 12 }}>
-        <div className="card-header bg-white border-0 pt-4 pb-0 px-4">
+      {/* Akses Cepat */}
+      <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: 14 }}>
+        <div className="card-header bg-white border-0 pt-4 pb-2 px-4">
           <h6 className="fw-bold mb-0">
-            <i className="fas fa-clock me-2" style={{ color: '#007c92' }} />
-            Pendaftar Terbaru
+            <i className="fas fa-bolt me-2" style={{ color: '#007c92' }} />
+            Akses Cepat
           </h6>
         </div>
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-hover mb-0">
-              <thead style={{ background: '#f8f9fa' }}>
-                <tr>
-                  <th className="px-4 py-3 small fw-semibold text-muted border-0">Nama Lengkap</th>
-                  <th className="py-3 small fw-semibold text-muted border-0">Asal Sekolah</th>
-                  <th className="py-3 small fw-semibold text-muted border-0">Status</th>
-                  <th className="py-3 small fw-semibold text-muted border-0">Tanggal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {!siswaBaru || siswaBaru.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center py-5 text-muted">
-                      <i className="fas fa-inbox fa-2x mb-2 d-block opacity-25" />
-                      Belum ada pendaftar
-                    </td>
-                  </tr>
-                ) : (
-                  siswaBaru.map((s, i) => (
-                    <tr key={i}>
-                      <td className="px-4 py-3 fw-semibold">{s.nama_lengkap}</td>
-                      <td className="py-3 text-muted">{s.asal_sekolah}</td>
-                      <td className="py-3">
-                        <span
-                          className="badge rounded-pill px-3 py-2"
-                          style={{ background: badgeColor(s.status), fontSize: '0.75rem' }}
-                        >
-                          {statusLabel(s.status)}
-                        </span>
-                      </td>
-                      <td className="py-3 text-muted small">
-                        {new Date(s.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+        <div className="card-body px-4 pb-4">
+          <div className="row g-3">
+            <div className="col-md-4">
+              <Link
+                href="/admin/berita/tambah"
+                className="d-flex align-items-center p-3 rounded-3 text-decoration-none"
+                style={{ background: '#007c921a', border: '1px dashed #007c92' }}
+              >
+                <i className="fas fa-plus-circle me-3 fa-lg" style={{ color: '#007c92' }} />
+                <div>
+                  <div className="fw-semibold small" style={{ color: '#007c92' }}>Tulis Berita Baru</div>
+                  <div className="text-muted" style={{ fontSize: 11 }}>Berita, Pengumuman, Agenda</div>
+                </div>
+              </Link>
+            </div>
+            <div className="col-md-4">
+              <Link
+                href="/admin/guru/tambah"
+                className="d-flex align-items-center p-3 rounded-3 text-decoration-none"
+                style={{ background: '#27ae601a', border: '1px dashed #27ae60' }}
+              >
+                <i className="fas fa-user-plus me-3 fa-lg" style={{ color: '#27ae60' }} />
+                <div>
+                  <div className="fw-semibold small" style={{ color: '#27ae60' }}>Tambah Data Guru</div>
+                  <div className="text-muted" style={{ fontSize: 11 }}>Nama, jabatan, foto</div>
+                </div>
+              </Link>
+            </div>
+            <div className="col-md-4">
+              <Link
+                href="/admin/fasilitas/tambah"
+                className="d-flex align-items-center p-3 rounded-3 text-decoration-none"
+                style={{ background: '#8e44ad1a', border: '1px dashed #8e44ad' }}
+              >
+                <i className="fas fa-image me-3 fa-lg" style={{ color: '#8e44ad' }} />
+                <div>
+                  <div className="fw-semibold small" style={{ color: '#8e44ad' }}>Tambah Fasilitas</div>
+                  <div className="text-muted" style={{ fontSize: 11 }}>Foto & deskripsi fasilitas</div>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="card-footer bg-white border-0 px-4 pb-4">
-          <Link href="/admin/pendaftaran" className="btn btn-sm px-4" style={{ background: '#007c92', color: 'white', borderRadius: 8 }}>
-            Lihat Semua Pendaftar
+      </div>
+
+      {/* Info website publik */}
+      <div className="card border-0 shadow-sm" style={{ borderRadius: 14, background: 'linear-gradient(135deg, #007c92 0%, #005a6b 100%)' }}>
+        <div className="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            <h6 className="fw-bold text-white mb-1">Lihat Website Publik</h6>
+            <p className="text-white opacity-75 small mb-0">Cek tampilan website yang dilihat pengunjung</p>
+          </div>
+          <Link
+            href="/"
+            target="_blank"
+            className="btn fw-semibold px-4"
+            style={{ background: '#ffcc00', color: '#1a1a2e', borderRadius: 8 }}
+          >
+            <i className="fas fa-external-link-alt me-2" />Buka Website
           </Link>
         </div>
       </div>
