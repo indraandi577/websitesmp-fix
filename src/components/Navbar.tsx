@@ -75,8 +75,10 @@ export default function Navbar() {
               </li>
             ))}
             <li className="nav-item ms-lg-3">
-              <Link
-                href="/pendaftaran"
+              <a
+                href="https://spmb-aiis.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="nav-link shadow-sm"
                 style={{
                   backgroundColor: 'var(--smp-gold)',
@@ -87,7 +89,7 @@ export default function Navbar() {
                 }}
               >
                 DAFTAR
-              </Link>
+              </a>
             </li>
           </ul>
         </div>

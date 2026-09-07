@@ -104,10 +104,13 @@ export default function Footer() {
                 { href: '/profil', label: 'Profil Sekolah' },
                 { href: '/informasi', label: 'Informasi' },
                 { href: '/kontak', label: 'Kontak' },
-                { href: '/pendaftaran', label: 'Pendaftaran PPDB', gold: true },
+                { href: 'https://spmb-aiis.vercel.app/', label: 'Pendaftaran PPDB', gold: true },
               ].map(({ href, label, gold }) => (
                 <li key={href}>
-                  <Link href={href} className="text-decoration-none" style={{ color: gold ? '#ffcc00' : '#adb5bd' }}>
+                  <Link href={href} className="text-decoration-none" style={{ color: gold ? '#ffcc00' : '#adb5bd' }}
+                  target={gold ? '_blank' : undefined}
+                  rel={gold ? 'noopener noreferrer' : undefined}
+                >
                     <i className="fas fa-chevron-right me-2" style={{ color: '#ffcc00', fontSize: 10 }} />
                     {label}
                   </Link>

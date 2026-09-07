@@ -8,7 +8,7 @@ export default function HeroSlider() {
       title: 'SMP INTEGRAL\nHIDAYATULLAH KEBUMEN',
       desc: 'Membentuk Generasi Berbasis Tauhid, Cerdas, dan Mandiri dengan Fasilitas Pendidikan Modern.',
       buttons: [
-        { href: '/pendaftaran', label: 'DAFTAR SEKARANG', style: 'gold' },
+        { href: 'https://spmb-aiis.vercel.app/', label: 'DAFTAR SEKARANG', style: 'gold' },
         { href: '/profil', label: 'PROFIL SEKOLAH', style: 'outline' },
       ],
     },
@@ -22,7 +22,7 @@ export default function HeroSlider() {
       img: '/img/DSC_0055.jpg',
       title: 'Wujudkan Cita-cita\nBersama Kami',
       desc: 'Kurikulum Integral yang memadukan ilmu pengetahuan dan kecerdasan spiritual.',
-      buttons: [{ href: '/pendaftaran', label: 'GABUNG SEKARANG', style: 'gold' }],
+      buttons: [{ href: 'https://spmb-aiis.vercel.app/', label: 'GABUNG SEKARANG', style: 'gold' }],
       center: true,
     },
   ]
@@ -86,6 +86,8 @@ export default function HeroSlider() {
                         <a
                           key={btn.label}
                           href={btn.href}
+                          target={btn.href.startsWith('http') ? '_blank' : undefined}
+                          rel={btn.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                           className="btn btn-lg shadow"
                           style={{
                             backgroundColor: '#ffcc00',
