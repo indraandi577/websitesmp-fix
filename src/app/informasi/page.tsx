@@ -21,8 +21,8 @@ function formatTanggal(dateStr: string) {
 function badgeColor(kategori: string) {
   switch (kategori) {
     case 'Berita': return '#007c92'
+    case 'Artikel': return '#27ae60'
     case 'Pengumuman': return '#e67e22'
-    case 'Agenda': return '#8e44ad'
     default: return '#555'
   }
 }
@@ -40,7 +40,7 @@ export default async function InformasiPage({
 
   const { data: beritas } = await query
 
-  const kategoris = ['Berita', 'Pengumuman', 'Agenda']
+  const kategoris = ['Berita', 'Artikel', 'Pengumuman']
 
   return (
     <>
@@ -51,7 +51,7 @@ export default async function InformasiPage({
       >
         <div className="container" style={{ paddingTop: 80 }}>
           <h1 className="display-4 fw-bold">Pusat Informasi</h1>
-          <p className="lead opacity-75">Berita terbaru, pengumuman, dan agenda dari SMP Integral Hidayatullah Kebumen</p>
+          <p className="lead opacity-75">Artikel dan pengumuman terbaru dari SMP Integral Hidayatullah Kebumen</p>
         </div>
       </section>
 

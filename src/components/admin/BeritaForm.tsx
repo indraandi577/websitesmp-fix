@@ -14,7 +14,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 export default function BeritaForm({ mode, berita }: Props) {
   const router = useRouter()
   const [judul, setJudul] = useState(berita?.judul ?? '')
-  const [kategori, setKategori] = useState<'Berita' | 'Pengumuman' | 'Agenda'>(berita?.kategori ?? 'Berita')
+  const [kategori, setKategori] = useState<'Berita' | 'Artikel' | 'Pengumuman'>(berita?.kategori ?? 'Berita')
   const [isi, setIsi] = useState(berita?.isi ?? '')
   const [gambar, setGambar] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
@@ -82,10 +82,10 @@ export default function BeritaForm({ mode, berita }: Props) {
             </div>
             <div className="col-md-4">
               <label className="form-label fw-semibold small">Kategori</label>
-              <select className="form-select" value={kategori} onChange={(e) => setKategori(e.target.value as 'Berita' | 'Pengumuman' | 'Agenda')}>
+              <select className="form-select" value={kategori} onChange={(e) => setKategori(e.target.value as 'Berita' | 'Artikel' | 'Pengumuman')}>
                 <option value="Berita">Berita</option>
+                <option value="Artikel">Artikel</option>
                 <option value="Pengumuman">Pengumuman</option>
-                <option value="Agenda">Agenda</option>
               </select>
             </div>
           </div>

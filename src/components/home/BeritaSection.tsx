@@ -20,8 +20,8 @@ function formatTanggal(dateStr: string) {
 function badgeColor(kategori: string) {
   switch (kategori) {
     case 'Berita': return 'var(--smp-base)'
+    case 'Artikel': return '#27ae60'
     case 'Pengumuman': return '#e67e22'
-    case 'Agenda': return '#8e44ad'
     default: return '#555'
   }
 }

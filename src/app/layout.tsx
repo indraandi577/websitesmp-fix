@@ -6,6 +6,10 @@ import ConditionalLayout from '@/components/ConditionalLayout'
 export const metadata: Metadata = {
   title: 'SMP Integral Hidayatullah Kebumen',
   description: 'Website Resmi SMP Integral Hidayatullah Kebumen – Membentuk Generasi Berbasis Tauhid, Cerdas, dan Mandiri.',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
 }
 
 export default function RootLayout({

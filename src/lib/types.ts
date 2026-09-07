@@ -6,7 +6,7 @@ export type Berita = {
   id: number
   judul: string
   isi: string
-  kategori: 'Pengumuman' | 'Berita' | 'Agenda'
+  kategori: 'Berita' | 'Artikel' | 'Pengumuman'
   gambar: string | null
   slug: string | null
   konten_blok: object | null
