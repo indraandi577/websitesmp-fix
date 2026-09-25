@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
 
 function slugify(text: string) {
@@ -12,11 +12,9 @@ function slugify(text: string) {
 
 async function checkAuth() {
   const cookieStore = await cookies()
-  const session = cookieStore.get('admin_session')
-  return session?.value === 'authenticated'
+  return cookieStore.get('admin_session')?.value === 'authenticated'
 }
 
-// POST - Tambah berita
 export async function POST(request: Request) {
   if (!await checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -26,7 +24,7 @@ export async function POST(request: Request) {
   const isi = formData.get('isi') as string
   const gambarFile = formData.get('gambar') as File | null
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   let gambarPath: string | null = null
 
   if (gambarFile && gambarFile.size > 0) {
@@ -49,7 +47,6 @@ export async function POST(request: Request) {
   return NextResponse.json({ success: true })
 }
 
-// PUT - Edit berita
 export async function PUT(request: Request) {
   if (!await checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -61,11 +58,10 @@ export async function PUT(request: Request) {
   const gambarFile = formData.get('gambar') as File | null
   const gambarLama = formData.get('gambar_lama') as string
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   let gambarPath = gambarLama || null
 
   if (gambarFile && gambarFile.size > 0) {
-    // Hapus gambar lama
     if (gambarLama) await supabase.storage.from('beritas').remove([gambarLama])
     const ext = gambarFile.name.split('.').pop()
     const fileName = `${Date.now()}.${ext}`
@@ -86,12 +82,11 @@ export async function PUT(request: Request) {
   return NextResponse.json({ success: true })
 }
 
-// DELETE - Hapus berita
 export async function DELETE(request: Request) {
   if (!await checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id, gambar } = await request.json()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (gambar) await supabase.storage.from('beritas').remove([gambar])
   const { error } = await supabase.from('beritas').delete().eq('id', id)

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { cookies } from 'next/headers'
 
 async function checkAuth() {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   const deskripsi = formData.get('deskripsi') as string
   const fotoFile = formData.get('foto') as File
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const ext = fotoFile.name.split('.').pop()
   const fileName = `${Date.now()}.${ext}`
 
@@ -24,7 +24,11 @@ export async function POST(request: Request) {
     .upload(fileName, fotoFile, { contentType: fotoFile.type })
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
 
-  const { error } = await supabase.from('fasilitas').insert({ nama_fasilitas: nama, deskripsi: deskripsi || null, foto: fileName })
+  const { error } = await supabase.from('fasilitas').insert({
+    nama_fasilitas: nama,
+    deskripsi: deskripsi || null,
+    foto: fileName
+  })
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
@@ -33,7 +37,7 @@ export async function DELETE(request: Request) {
   if (!await checkAuth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { id, gambar } = await request.json()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   if (gambar) await supabase.storage.from('fasilitas').remove([gambar])
   const { error } = await supabase.from('fasilitas').delete().eq('id', id)
